@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const NotesSchema = new Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+  },
   title: {
     type: String,
     required: true,
@@ -15,6 +19,7 @@ const NotesSchema = new Schema({
     default: "General",
   },
   date: {
+    default: new Date().toISOString(),
     type: String,
     required: true,
   },
