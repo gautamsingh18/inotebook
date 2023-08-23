@@ -15,31 +15,35 @@ router.post(
     password: { notEmpty: true },
   }),
   async (req, res) => {
-    const error = validationResult(req);
-    if (!error.isEmpty()) {
-      return res.send({ error: error.array() });
-    }
+    try {
+      const error = validationResult(req);
+      if (!error.isEmpty()) {
+        return res.send({ error: error.array() });
+      }
 
-    let user = await UserModel.findOne({ email: req.body.email });
-    if (user) {
-      return res
-        .status(400)
-        .json({ error: "a user with this mail id already exists" });
+      let user = await UserModel.findOne({ email: req.body.email });
+      if (user) {
+        return res
+          .status(400)
+          .json({ error: "a user with this mail id already exists" });
+      }
+      var salt = await bcrypt.genSalt(10);
+      var hash = await bcrypt.hash(req.body.password, salt);
+      user = await UserModel.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: hash,
+      });
+      const jwtData = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authToken = jwt.sign(jwtData, JWT_SECRET_KEY);
+      res.status(200).send("done");
+    } catch (error) {
+      res.status(500).send(error.message);
     }
-    var salt = await bcrypt.genSalt(10);
-    var hash = await bcrypt.hash(req.body.password, salt);
-    user = await UserModel.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: hash,
-    });
-    const jwtData = {
-      user: {
-        id: user.id,
-      },
-    };
-    const authToken = jwt.sign(jwtData, JWT_SECRET_KEY);
-    res.status(200).send("done");
   }
 );
 
