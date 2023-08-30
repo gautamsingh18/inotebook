@@ -3,6 +3,7 @@ const router = express.Router();
 const fetchUser = require("../middleware/fetchUser");
 const NotesModel = require("../models/Notes");
 const { body, validationResult } = require("express-validator");
+
 //to fetch all notes :login required
 router.get("/fetchallnotes", fetchUser, async (req, res) => {
   try {
@@ -30,7 +31,7 @@ router.post(
       const errors = await validationResult(req);
       if (!errors.isEmpty()) {
         console.log("error here");
-        return res.status(500).json({ errors: errors.array() });
+        return res.status(300).json({ errors: errors.array() });
       }
       const note = await NotesModel.create({
         user: req.user.id,
