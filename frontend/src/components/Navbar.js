@@ -77,10 +77,10 @@ export default function NavbarComponent() {
               </li>
             </ul>
             <form className="d-flex" role="search">
-              <Link className="btn btn-primary mx-2" role="button" to="/login">
+              <Link className="btn btn-primary mx-1" role="button" to="/login">
                 login
               </Link>
-              <Link className="btn btn-primary mx-2" role="button" to="/signup">
+              <Link className="btn btn-primary mx-1" role="button" to="/signup">
                 sign up
               </Link>
             </form>

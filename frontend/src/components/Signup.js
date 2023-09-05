@@ -1,6 +1,6 @@
 import React from "react";
 
-const Login = () => {
+const Signup = () => {
   return (
     <div>
       <form>
@@ -27,11 +27,11 @@ const Login = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary my-2">
-          login
+          signup
         </button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Signup;
