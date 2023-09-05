@@ -17,7 +17,7 @@ const NoteState = (props) => {
     });
     //todo
     const json = await response.json();
-    console.log("fetchallnote function called");
+    console.log("fetch all note function called");
     note = json;
     setNotes(json);
   };
@@ -33,18 +33,7 @@ const NoteState = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();
-    console.log(json);
-    console.log("add a note function called");
-    const note = {
-      _id: "64e5a742f8f5225e9c080haaf",
-      user: "64e5a4aff28f5225e9c080ba6",
-      title: "temp note",
-      description: "this is my third note",
-      tag: "personal",
-      date: "2023-08-23T06:16:37.218Z",
-      __v: 0,
-    };
+    const note = await response.json();
     setNotes(notes.concat(note));
   };
 
@@ -57,7 +46,7 @@ const NoteState = (props) => {
     setNotes(newNotes);
 
     const response = await fetch(`${host}/api/notes/deleteNote/${id}`, {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         "auth-token":
@@ -72,25 +61,27 @@ const NoteState = (props) => {
 
   const editNote = async (id, title, description, tag) => {
     const response = await fetch(`${host}/api/notes/updateNote/${id}`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRlNWE0YWZmOGY1MjI1ZTljMDgwYmE2In0sImlhdCI6MTY5Mjc3MTYwN30.JHejjD8x4rB-q6AwUmi0Hnvm9zX7Db5oM5-8MLlhwFM",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRlMmYyMjU0NTdiOTMyYzRlODc5ZjEwIn0sImlhdCI6MTY5MjU5NDgxOX0.7iNba3E4o1uuXgAeDwkjhazdKqaAMrtpNHMnE0FJupE",
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = response.json();
-    console.log(json);
-    for (let index = 0; index < notes.length; index++) {
-      const element = notes[index];
+    console.log(await response.json());
+    let newNote = await JSON.parse(JSON.stringify(notes));
+
+    for (let index = 0; index < newNote.length; index++) {
+      const element = newNote[index];
       if (element._id === id) {
-        element.title = title;
-        element.description = description;
-        element.tag = tag;
+        newNote[index].title = title;
+        newNote[index].description = description;
+        newNote[index].tag = tag;
+        break;
       }
     }
-    console.log("edit a note function called");
+    setNotes(newNote);
   };
 
   return (

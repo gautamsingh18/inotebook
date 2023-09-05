@@ -30,7 +30,6 @@ router.post(
       const { title, description, tag } = req.body;
       const errors = await validationResult(req);
       if (!errors.isEmpty()) {
-        console.log("error here");
         return res.status(300).json({ errors: errors.array() });
       }
       const note = await NotesModel.create({
@@ -92,7 +91,7 @@ router.delete("/deleteNote/:id", fetchUser, async (req, res) => {
       return res.status(401).send("unauthorized");
     }
     await NotesModel.findByIdAndDelete(req.params.id);
-    return res.status(200).send("note deleted");
+    return res.status(200).json({ success: "true" });
   } catch (error) {
     console.log(error.message);
     return res.status(500).send(error.message);
