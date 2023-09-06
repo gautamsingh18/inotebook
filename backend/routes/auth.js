@@ -11,6 +11,7 @@ const JWT_SECRET_KEY = "*#*#1234*#*#";
 router.post(
   "/createUser",
   checkSchema({
+    name: { minLength: 5 },
     email: { isEmail: true },
     password: { notEmpty: true },
   }),
@@ -39,8 +40,9 @@ router.post(
           id: user.id,
         },
       };
-      const authToken = jwt.sign(jwtData, JWT_SECRET_KEY);
-      res.status(200).send("done");
+      const auth_token = jwt.sign(jwtData, JWT_SECRET_KEY);
+
+      res.json({ auth_token });
     } catch (error) {
       res.status(500).send(error.message);
     }
@@ -55,6 +57,7 @@ router.post(
     password: { notEmpty: true },
   }),
   async (req, res) => {
+    let success = false;
     ///if email and password entered are not valid
     const error = validationResult(req);
     if (!error.isEmpty()) {
@@ -64,11 +67,15 @@ router.post(
     try {
       let user = await UserModel.findOne({ email: email });
       if (!user) {
-        return res.status(500).json({ error: "please use valid credentials" });
+        return res
+          .status(500)
+          .json({ success, error: "please use valid credentials" });
       }
       const passCheck = await bcrypt.compare(password, user.password);
       if (!passCheck) {
-        return res.status(500).json({ error: "please use valid credentials" });
+        return res
+          .status(500)
+          .json({ success, error: "please use valid credentials" });
       }
       const payload = {
         user: {
@@ -76,7 +83,8 @@ router.post(
         },
       };
       const auth_token = await jwt.sign(payload, JWT_SECRET_KEY);
-      return res.json({ auth_token });
+      if (auth_token) success = true;
+      return res.json({ success, auth_token });
     } catch (e) {
       console.log(e);
       res.status(500).send("errror");

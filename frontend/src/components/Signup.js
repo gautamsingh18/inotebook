@@ -1,29 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  let navigate = useNavigate();
+  const [credentials, setCredentials] = useState({
+    name: "",
+    email: "",
+    password: "",
+    cpassword: "",
+  });
+  const handleOnChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch("http://localhost:5000/api/auth/createUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: credentials.name,
+        email: credentials.email,
+        password: credentials.password,
+      }),
+    });
+    const json = await response.json();
+    console.log(json);
+    if (json.auth_token) {
+      localStorage.setItem("token", json.auth_token);
+      navigate("/");
+    } else {
+      alert("invalid something");
+    }
+  };
   return (
-    <div>
+    <div className="container" onSubmit={handleSubmit}>
       <form>
         <div className="form-group my-2">
-          <label for="exampleInputEmail1">Email address</label>
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            className="form-control my-2"
+            id="name"
+            name="name"
+            aria-describedby="emailHelp"
+            placeholder="Enter your name"
+            onChange={handleOnChange}
+            required
+            minLength={5}
+          />
+        </div>
+        <div className="form-group my-2">
+          <label htmlFor="email">Email address</label>
           <input
             type="email"
             className="form-control my-2"
-            id="exampleInputEmail1"
+            id="email"
+            name="email"
             aria-describedby="emailHelp"
             placeholder="Enter email"
+            onChange={handleOnChange}
+            required
+            minLength={5}
           />
-          <small id="emailHelp" className="form-text text-muted my-2">
-            We'll never share your email with anyone else.
-          </small>
         </div>
         <div className="form-group my-2">
-          <label for="exampleInputPassword1">Password</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             className="form-control my-2"
-            id="exampleInputPassword1"
+            id="password"
+            name="password"
             placeholder="Password"
+            onChange={handleOnChange}
+            required
+            minLength={5}
+          />
+        </div>
+        <div className="form-group my-2">
+          <label htmlFor="cpassword">Confirm Password</label>
+          <input
+            type="password"
+            className="form-control my-2"
+            id="cpassword"
+            name="cpassword"
+            placeholder="Password"
+            onChange={handleOnChange}
+            required
+            minLength={5}
           />
         </div>
         <button type="submit" className="btn btn-primary my-2">
