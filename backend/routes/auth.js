@@ -11,7 +11,7 @@ const JWT_SECRET_KEY = "*#*#1234*#*#";
 router.post(
   "/createUser",
   checkSchema({
-    name: { minLength: 5 },
+    name: { isLength: 5 },
     email: { isEmail: true },
     password: { notEmpty: true },
   }),
