@@ -1,8 +1,13 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function NavbarComponent() {
   let location = useLocation();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -44,46 +49,29 @@ export default function NavbarComponent() {
                   About
                 </Link>
               </li>
-              <li className="nav-item dropdown">
-                <Link
-                  className="nav-link dropdown-toggle"
-                  to="/"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Dropdown
-                </Link>
-                <ul className="dropdown-menu">
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      Action
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      Another action
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      Something else here
-                    </Link>
-                  </li>
-                </ul>
-              </li>
             </ul>
-            <form className="d-flex" role="search">
-              <Link className="btn btn-primary mx-1" role="button" to="/login">
-                login
-              </Link>
-              <Link className="btn btn-primary mx-1" role="button" to="/signup">
-                sign up
-              </Link>
-            </form>
+            {!localStorage.getItem("token") ? (
+              <form className="d-flex" role="search">
+                <Link
+                  className="btn btn-primary mx-1"
+                  role="button"
+                  to="/login"
+                >
+                  login
+                </Link>
+                <Link
+                  className="btn btn-primary mx-1"
+                  role="button"
+                  to="/signup"
+                >
+                  sign up
+                </Link>
+              </form>
+            ) : (
+              <button className="btn btn-primary" onClick={handleLogout}>
+                logout
+              </button>
+            )}
           </div>
         </div>
       </nav>
